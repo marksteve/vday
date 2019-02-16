@@ -5,74 +5,29 @@
 <link rel="stylesheet" href='https://use.typekit.net/mby8tcb.css'>
 <style>
   body {
-    background: rebeccapurple;
     margin: 0;
     font: 18px/1.5 paganini, serif;
     font-weight: 300;
   }
-  main {
-    width: 100vw;
-    height: 100vh;
-  }
-  main, .sunflower {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  .sunflower {
-    width: 600px;
-    height: 600px;
-    background: url(sunflower.svg) no-repeat center center;
-    background-size: 600px;
-  }
   .message {
     color: #FBDC4A;
     padding: 0 1rem;
-    max-width: 30rem;
     box-sizing: border-box;
     text-align: center;
+    position: absolute;
+    left: 0;
+    bottom: 3em;
+    right: 0;
+  }
+  .message p {
+    max-width: 30rem;
+    margin: 0 auto;
   }
 </style>
 <body>
-<main>
-  <div class='sunflower'>
-    <div class='seeds'></div>
-  </div>
-  <div class='message'>
-    Did you know that the pattern of the seeds of a sunflower follow the golden ratio? Ain't nature pretty? I don't like buying flowers but I like coding them. So here's a sunflower for you. Happy Valentines Day :)
-  </div>
-</main>
-<script src='two.min.js'></script>
-<script>
-// h e n l o
-var n = 2618
-var phi = (Math.sqrt(5) - 1) / 2
-function rho (k) {
-  return Math.pow(k, phi)
-}
-function theta (k) {
-  return k * 2 * Math.PI * phi
-}
-function plot () {
-  var two = new Two({type: Two.Types.canvas, width: 400, height: 400})
-    .appendTo(document.querySelector('.seeds'))
-  var c = two.makeCircle(200, 200, 135)
-  c.fill = '#3F2311'
-  c.noStroke()
-  for (var k = 0; k < n; k++) {
-    var a = theta(k)
-    var d = rho(k) * 1.05
-    var x = d * Math.cos(a)
-    var y = d * Math.sin(a)
-    var r = 1 + (k / n) * 2
-    var c = two.makeCircle(x + 200, y + 200, r)
-    c.opacity = k / n < 0.4 ? 0.5 : 1
-    c.fill = '#A36D34'
-    c.noStroke()
-  }
-  two.update()
-}
-plot()
-</script>
-
+<div class='message'>
+  <p>Thank you for making me the happiest.</p>
+</div>
+<script src='three.min.js'></script>
+<script src='OrbitControls.js'></script>
+<script src='index.js'></script>
