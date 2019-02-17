@@ -28,23 +28,6 @@ function petal (x, y, z, r) {
   return geom
 }
 
-function disk (x, y, r) {
-  var circle = new THREE.Shape()
-  circle.moveTo(x, y + r)
-  circle.quadraticCurveTo(x + r, y + r, x + r, y)
-  circle.quadraticCurveTo(x + r, y - r, x, y - r)
-  circle.quadraticCurveTo(x - r, y - r, x - r, y)
-  circle.quadraticCurveTo(x - r, y + r, x, y + r)
-  var geom = new THREE.ExtrudeGeometry(circle, {
-    steps: 2,
-    depth: 0.1,
-    bevelThickness: 3,
-    bevelSize: 10
-  })
-  geom.rotateX(0.5 * Math.PI)
-  return geom
-}
-
 var scene = new THREE.Scene()
 var camera = new THREE.PerspectiveCamera(
   75,
@@ -54,6 +37,10 @@ var camera = new THREE.PerspectiveCamera(
 )
 camera.position.z = 50
 camera.position.y = -5
+
+var controls = new THREE.OrbitControls(camera)
+controls.enableZoom = false
+controls.enablePan = false
 
 var renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(window.devicePixelRatio)
@@ -81,17 +68,44 @@ var petalMaterial = new THREE.MeshPhongMaterial({
   side: THREE.DoubleSide,
   flatShading: true
 })
-var diskMaterial = new THREE.MeshLambertMaterial({
+var outerSeedMaterial = new THREE.MeshLambertMaterial({
   color: 0x3f2311,
-  side: THREE.DoubleSide,
+  flatShading: true
+})
+var innerSeedMaterial = new THREE.MeshLambertMaterial({
+  color: 0xa36d34,
   flatShading: true
 })
 
 var petals = 20
 for (var i = 0; i < petals; i++) {
-  group.add(new THREE.Mesh(petal(0, 3, 0, i / petals), petalMaterial))
+  // group.add(new THREE.Mesh(petal(0, 3, 0, i / petals), petalMaterial))
 }
-group.add(new THREE.Mesh(disk(0, 0, 5), diskMaterial))
+var sphere = new THREE.SphereBufferGeometry(0.5)
+var n = 2618
+var phi = (Math.sqrt(5) - 1) / 2
+function rho (k) {
+  return Math.pow(k, phi)
+}
+function theta (k) {
+  return k * 2 * Math.PI * phi
+}
+for (var k = 0; k < n; k++) {
+  var a = theta(k)
+  var d = rho(k) * 0.105
+  var x = d * Math.cos(a)
+  var y = d * Math.sin(a)
+  // var r = 0.9 + k / n * 0.3
+  var mesh = new THREE.Mesh(
+    sphere,
+    k < 1000 ? innerSeedMaterial : outerSeedMaterial
+  )
+  mesh.position.x = x
+  mesh.position.y = k < 1000 ? 1 : -0.5 * Math.sin((k / n * 3 + 0.5) * Math.PI)
+  mesh.position.z = y
+  group.add(mesh)
+}
+
 group.rotation.x -= 0.6 * Math.PI
 scene.add(group)
 
